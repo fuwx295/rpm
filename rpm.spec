@@ -1,4 +1,5 @@
-%define anolis_release .0.1
+%define anolis_release .0.2
+%define _legacy_common_support 1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -690,6 +691,9 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jan 20 2022 Weitao Zhou <zhouwt@linux.alibaba.com> - 4.14.3-19.0.2
+- Fix gcc10 -fno-common compile issue for compatible with gcc10 build
+
 * Wed Dec 15 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.3-19.0.1
 - Rebrand for Anolis OS
 
