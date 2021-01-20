@@ -1,0 +1,47 @@
+From 74766d30b95f1575df8a42d185f2643caa235a8b Mon Sep 17 00:00:00 2001
+Message-Id: <74766d30b95f1575df8a42d185f2643caa235a8b.1543835412.git.pmatilai@redhat.com>
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Fri, 23 Nov 2018 12:47:27 +0200
+Subject: [PATCH] Handle unsupported digests the same as disabled ones
+ (RhBug:1652529)
+
+A digest type unsupported by the underlying crypto library (whether
+technically or by configuration) does not mean the digest is invalid,
+it just cannot be used. Which for the purposes of verification is the
+same as if that digest didn't exist at all, and that's exactly how we
+handle digests and signatures disabled by configuration.
+
+One particular case is FIPS mode which globally disables the use of MD5,
+which we mishandled prior to this by showing it as OK in verification
+despite actually not verifying it at all.
+
+The exact place for handling this case is a bit subtle: the "obvious"
+place for checking for supported type is in rpmvsInitRange() but this
+doesn't work because of rpmDigestBundleAddID() return code semantics.
+The other "obvious" place would be rpmvsVerify(), but by that point
+we have even more funny cases to consider. So for now, it's actually
+easiest to check for this in rpmvsFiniRange() even if it's not the
+most obvious place for doing so. Might want to change the
+rpmDigestBundleAddID() semantics later, but this makes for a nicer
+backport (we'll need this in 4.14.x too).
+---
+ lib/rpmvs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/lib/rpmvs.c b/lib/rpmvs.c
+index 7b5b86f8e..622e48011 100644
+--- a/lib/rpmvs.c
++++ b/lib/rpmvs.c
+@@ -388,6 +388,9 @@ void rpmvsFiniRange(struct rpmvs_s *sis, int range)
+ 
+ 	if (sinfo->range == range && sinfo->rc == RPMRC_OK) {
+ 	    sinfo->ctx = rpmDigestBundleDupCtx(sis->bundle, sinfo->id);
++	    /* Handle unsupported digests the same as disabled ones */
++	    if (sinfo->ctx == NULL)
++		sinfo->rc = RPMRC_NOTFOUND;
+ 	    rpmDigestBundleFinal(sis->bundle, sinfo->id, NULL, NULL, 0);
+ 	}
+     }
+-- 
+2.19.2
+

@@ -1,0 +1,28 @@
+From 66e0c929b203d684a4f58135f42435fcc29cdd51 Mon Sep 17 00:00:00 2001
+Message-Id: <66e0c929b203d684a4f58135f42435fcc29cdd51.1554982695.git.pmatilai@redhat.com>
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Wed, 10 Oct 2018 12:00:19 +0300
+Subject: [PATCH] Fix testing for wrong variable in selinux plugin debug log
+
+The strerror() case couldn't be reached as we were testing for the
+wrong rc, spotted by covscan.
+---
+ plugins/selinux.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/selinux.c b/plugins/selinux.c
+index 3c9d9e4ab..accd47416 100644
+--- a/plugins/selinux.c
++++ b/plugins/selinux.c
+@@ -169,7 +169,7 @@ static rpmRC selinux_fsm_file_prepare(rpmPlugin plugin, rpmfi fi,
+ 
+ 	    if (rpmIsDebug()) {
+ 		rpmlog(RPMLOG_DEBUG, "lsetfilecon: (%s, %s) %s\n",
+-		       path, scon, (rc < 0 ? strerror(errno) : ""));
++		       path, scon, (conrc < 0 ? strerror(errno) : ""));
+ 	    }
+ 
+ 	    if (conrc == 0 || (conrc < 0 && errno == EOPNOTSUPP))
+-- 
+2.20.1
+

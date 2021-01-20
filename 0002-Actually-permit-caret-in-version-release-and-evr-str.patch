@@ -1,0 +1,29 @@
+From 15b296c324794d288750136b3b4f3350c3d0b8c7 Mon Sep 17 00:00:00 2001
+Message-Id: <15b296c324794d288750136b3b4f3350c3d0b8c7.1574338687.git.pmatilai@redhat.com>
+In-Reply-To: <e8fce62467a421132f4ebb6ca9c0926b623ec00e.1574338687.git.pmatilai@redhat.com>
+References: <e8fce62467a421132f4ebb6ca9c0926b623ec00e.1574338687.git.pmatilai@redhat.com>
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Tue, 27 Nov 2018 13:50:14 +0200
+Subject: [PATCH 2/2] Actually permit caret in version, release and evr strings
+
+Should've been in commit c7e711bba58374f03347c795a567441cbef3de58 really.
+---
+ build/rpmbuild_internal.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/build/rpmbuild_internal.h b/build/rpmbuild_internal.h
+index f758e6620..948632a16 100644
+--- a/build/rpmbuild_internal.h
++++ b/build/rpmbuild_internal.h
+@@ -18,7 +18,7 @@
+ #undef HTDATATYPE
+ 
+ #define WHITELIST_NAME ".-_+%{}"
+-#define WHITELIST_VERREL "._+%{}~"
++#define WHITELIST_VERREL "._+%{}~^"
+ #define WHITELIST_EVR WHITELIST_VERREL "-:"
+ 
+ struct TriggerFileEntry {
+-- 
+2.23.0
+

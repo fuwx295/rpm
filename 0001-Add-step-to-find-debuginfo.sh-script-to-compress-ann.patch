@@ -1,0 +1,35 @@
+From cc1965ce3acaa7d9356b7671050a15e2cda2f424 Mon Sep 17 00:00:00 2001
+Message-Id: <cc1965ce3acaa7d9356b7671050a15e2cda2f424.1571917336.git.pmatilai@redhat.com>
+From: nickclifton <31441682+nickclifton@users.noreply.github.com>
+Date: Wed, 19 Jun 2019 12:45:09 +0100
+Subject: [PATCH] Add step to find-debuginfo.sh script to compress annobin
+ notes.
+
+With the introduction of the annobin gcc plugin to the build process,
+built binary files have become larger.  Sometimes significantly so.
+This is a patch that adds a new step to the post-link process performed
+by rpmbuild, to run the objcopy program with the --merge-notes option
+specified.  This will reduce the size of the annobin notes in binary
+files, thus alleviating the size growth.
+---
+ scripts/find-debuginfo.sh | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/scripts/find-debuginfo.sh b/scripts/find-debuginfo.sh
+index d75da1108..2e9d76531 100755
+--- a/scripts/find-debuginfo.sh
++++ b/scripts/find-debuginfo.sh
+@@ -405,6 +405,10 @@ do_file()
+     fi
+   fi
+ 
++  # Compress any annobin notes in the original binary.
++  # Ignore any errors, since older objcopy don't support --merge-notes.
++  objcopy --merge-notes "$f" 2>/dev/null || true
++
+   # A binary already copied into /usr/lib/debug doesn't get stripped,
+   # just has its file names collected and adjusted.
+   case "$dn" in
+-- 
+2.21.0
+

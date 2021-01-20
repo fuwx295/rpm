@@ -1,0 +1,64 @@
+From 3fd79a5564df97d512be283c5c8a4da2e7ef8bce Mon Sep 17 00:00:00 2001
+Message-Id: <3fd79a5564df97d512be283c5c8a4da2e7ef8bce.1554983206.git.pmatilai@redhat.com>
+In-Reply-To: <2ec0832287bd1443ebf336f8a98293f30bfa2036.1554983205.git.pmatilai@redhat.com>
+References: <2ec0832287bd1443ebf336f8a98293f30bfa2036.1554983205.git.pmatilai@redhat.com>
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Mon, 18 Mar 2019 15:29:18 +0200
+Subject: [PATCH 2/3] Drop internal-only visibility on rpmvs-related API
+
+Makes it possible to use rpmvs API from eg librpmsign which we'll
+need in the next commit. We need to make select parts of this
+actually public eventually but for now...
+---
+ lib/rpmvs.h | 12 ------------
+ 1 file changed, 12 deletions(-)
+
+diff --git a/lib/rpmvs.h b/lib/rpmvs.h
+index a836d5c94..025895500 100644
+--- a/lib/rpmvs.h
++++ b/lib/rpmvs.h
+@@ -48,41 +48,29 @@ typedef int (*rpmsinfoCb)(struct rpmsinfo_s *sinfo, void *cbdata);
+ extern "C" {
+ #endif
+ 
+-RPM_GNUC_INTERNAL
+ const char *rpmsinfoDescr(struct rpmsinfo_s *sinfo);
+ 
+-RPM_GNUC_INTERNAL
+ char *rpmsinfoMsg(struct rpmsinfo_s *sinfo);
+ 
+-RPM_GNUC_INTERNAL
+ struct rpmvs_s *rpmvsCreate(int vfylevel, rpmVSFlags vsflags, rpmKeyring keyring);
+ 
+-RPM_GNUC_INTERNAL
+ void rpmvsInit(struct rpmvs_s *vs, hdrblob blob, rpmDigestBundle bundle);
+ 
+-RPM_GNUC_INTERNAL
+ rpmVSFlags rpmvsFlags(struct rpmvs_s *vs);
+ 
+-RPM_GNUC_INTERNAL
+ struct rpmvs_s *rpmvsFree(struct rpmvs_s *sis);
+ 
+-RPM_GNUC_INTERNAL
+ void rpmvsAppendTag(struct rpmvs_s *sis, hdrblob blob, rpmTagVal tag);
+ 
+-RPM_GNUC_INTERNAL
+ void rpmvsInitRange(struct rpmvs_s *sis, int range);
+ 
+-RPM_GNUC_INTERNAL
+ void rpmvsFiniRange(struct rpmvs_s *sis, int range);
+ 
+-RPM_GNUC_INTERNAL
+ int rpmvsRange(struct rpmvs_s *vs);
+ 
+-RPM_GNUC_INTERNAL
+ int rpmvsVerify(struct rpmvs_s *sis, int type,
+                        rpmsinfoCb cb, void *cbdata);
+ 
+-RPM_GNUC_INTERNAL
+ rpmRC rpmpkgRead(struct rpmvs_s *vs, FD_t fd,
+ 		hdrblob *sigblobp, hdrblob *blobp, char **emsg);
+ 
+-- 
+2.20.1
+

@@ -1,0 +1,30 @@
+From 5188a7b35eb3672c9b15e96433e033ee36f8e6a8 Mon Sep 17 00:00:00 2001
+From: Panu Matilainen <pmatilai@redhat.com>
+Date: Tue, 6 Aug 2019 13:06:16 +0300
+Subject: [PATCH] Fix memleak during transaction verify step in the NOKEY case.
+
+Found during RhBug:1714657 QA testing.
+In addition, add a comment to clarify the fallthrough as intentional.
+---
+ lib/transaction.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/lib/transaction.c b/lib/transaction.c
+index 6e4d4be65..e51cff25a 100644
+--- a/lib/transaction.c
++++ b/lib/transaction.c
+@@ -1226,8 +1226,10 @@ static int vfyCb(struct rpmsinfo_s *sinfo, void *cbdata)
+ 	 */
+ 	if (!(vd->vfylevel & RPMSIG_SIGNATURE_TYPE))
+ 	    sinfo->rc = RPMRC_OK;
++	/* fallthrough */
+     default:
+-	vd->msg = rpmsinfoMsg(sinfo);
++	if (sinfo->rc)
++	    vd->msg = rpmsinfoMsg(sinfo);
+ 	break;
+     }
+     return (sinfo->rc == 0);
+-- 
+2.21.0
+

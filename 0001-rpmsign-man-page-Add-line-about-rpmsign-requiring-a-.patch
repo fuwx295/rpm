@@ -1,0 +1,28 @@
+From be3347b5bff6142e86e533174fe0ec352405d159 Mon Sep 17 00:00:00 2001
+From: Florian Festi <ffesti@redhat.com>
+Date: Thu, 18 Jul 2019 07:45:53 +0200
+Subject: [PATCH] rpmsign man page: Add line about rpmsign requiring a valid
+ checksum
+
+and the limitations in FIPS mode
+---
+ doc/rpmsign.8 | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/doc/rpmsign.8 b/doc/rpmsign.8
+index 80ffb6a32..d895a3b8c 100644
+--- a/doc/rpmsign.8
++++ b/doc/rpmsign.8
+@@ -21,6 +21,9 @@ options generate and insert new signatures for each package
+ existing signatures. There are two options for historical reasons,
+ there is no difference in behavior currently.
+ 
++To create a signature rpm needs to verify the package's checksum. As a result
++packages with a MD5/SHA1 checksums cannot be signed in FIPS mode.
++
+ \fBrpm\fR \fB--delsign\fR \fB\fIPACKAGE_FILE\fB\fR\fI ...\fR
+ 
+ .PP
+-- 
+2.21.0
+

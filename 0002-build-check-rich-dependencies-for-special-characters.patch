@@ -1,0 +1,69 @@
+From e7fa1f1c1c4a6161c2254c761e857fdf04fba5ef Mon Sep 17 00:00:00 2001
+Message-Id: <e7fa1f1c1c4a6161c2254c761e857fdf04fba5ef.1574338784.git.pmatilai@redhat.com>
+In-Reply-To: <871065ddd493c76d80345d2e80b38b9ce4c7acdd.1574338784.git.pmatilai@redhat.com>
+References: <871065ddd493c76d80345d2e80b38b9ce4c7acdd.1574338784.git.pmatilai@redhat.com>
+From: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+Date: Wed, 21 Nov 2018 15:36:35 +0100
+Subject: [PATCH 2/3] build: check rich dependencies for special characters
+
+Reported-by: Michael Schroeder <mls@suse.de
+Signed-off-by: Igor Gnatenko <i.gnatenko.brain@gmail.com>
+---
+ build/pack.c | 30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
+
+diff --git a/build/pack.c b/build/pack.c
+index daf878c76..c94964be2 100644
+--- a/build/pack.c
++++ b/build/pack.c
+@@ -228,12 +228,36 @@ exit:
+     return rc;
+ }
+ 
+-static int haveTildeDep(Package pkg)
++struct charInDepData {
++    char c;
++    int present;
++};
++
++static rpmRC charInDepCb(void *cbdata, rpmrichParseType type,
++		const char *n, int nl, const char *e, int el, rpmsenseFlags sense,
++		rpmrichOp op, char **emsg) {
++    struct charInDepData *data = cbdata;
++    if (memchr(e, data->c, el))
++	data->present = 1;
++
++    return RPMRC_OK;
++}
++
++static int haveCharInDep(Package pkg, char c)
+ {
++    struct charInDepData data = {c, 0};
+     for (int i = 0; i < PACKAGE_NUM_DEPS; i++) {
+ 	rpmds ds = rpmdsInit(pkg->dependencies[i]);
+ 	while (rpmdsNext(ds) >= 0) {
+-	    if (strchr(rpmdsEVR(ds), '~'))
++	    if (rpmdsIsRich(ds)) {
++		const char *depstr = rpmdsN(ds);
++		rpmrichParse(&depstr, NULL, charInDepCb, &data);
++	    } else {
++		const char *evr = rpmdsEVR(ds);
++		if (strchr(evr, c))
++		    data.present = 1;
++	    }
++	    if (data.present)
+ 		return 1;
+ 	}
+     }
+@@ -327,7 +351,7 @@ exit:
+ static void finalizeDeps(Package pkg)
+ {
+     /* check if the package has a dependency with a '~' */
+-    if (haveTildeDep(pkg))
++    if (haveCharInDep(pkg, '~'))
+ 	(void) rpmlibNeedsFeature(pkg, "TildeInVersions", "4.10.0-1");
+ 
+     /* check if the package has a rich dependency */
+-- 
+2.23.0
+
