@@ -1,3 +1,4 @@
+%define anolis_release .0.1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -19,7 +20,7 @@
 # build with lmdb support?
 %bcond_with lmdb
 
-%if 0%{?rhel} > 7
+%if 0%{?rhel} > 7 || 0%{?anolis}
 # Disable python2 build by default
 %bcond_with python2
 %else
@@ -42,7 +43,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}%{rel}%{?dist}
+Release: %{?snapver:0.%{snapver}.}%{rel}%{anolis_release}%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -208,7 +209,7 @@ BuildRequires: libubsan
 %endif
 
 %if %{with libimaevm}
-%if 0%{?fedora} >= 28 || 0%{?rhel} > 7
+%if 0%{?fedora} >= 28 || 0%{?rhel} > 7 || 0%{?anolis}
 %global imadevname ima-evm-utils-devel
 %else
 %global imadevname ima-evm-utils
@@ -682,6 +683,10 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jul 20 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.3-14.0.1
+- Rebrand for Anolis OS
+- cherry-pick [0ab5e55]
+
 * Thu May 27 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-14
 - Be more careful about copying data from signature header (#1958477)
 - Fixes CVE-2021-20271
