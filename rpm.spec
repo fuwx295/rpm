@@ -1,3 +1,4 @@
+%define anolis_release .0.1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -19,7 +20,7 @@
 # build with lmdb support?
 %bcond_with lmdb
 
-%if 0%{?rhel} > 7
+%if 0%{?rhel} > 7 || 0%{?anolis}
 # Disable python2 build by default
 %bcond_with python2
 %else
@@ -42,7 +43,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}%{rel}%{?dist}
+Release: %{?snapver:0.%{snapver}.}%{rel}%{anolis_release}%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -173,7 +174,7 @@ BuildRequires: fakechroot gnupg2
 
 # XXX generally assumed to be installed but make it explicit as rpm
 # is a bit special...
-BuildRequires: redhat-rpm-config
+BuildRequires: anolis-rpm-config
 BuildRequires: gcc make
 BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
@@ -221,7 +222,7 @@ BuildRequires: libubsan
 %endif
 
 %if %{with libimaevm}
-%if 0%{?fedora} >= 28 || 0%{?rhel} > 7
+%if 0%{?fedora} >= 28 || 0%{?rhel} > 7 || 0%{?anolis}
 %global imadevname ima-evm-utils-devel
 %else
 %global imadevname ima-evm-utils
@@ -451,7 +452,7 @@ done;
     --libdir=%{_libdir} \
     --build=%{_target_platform} \
     --host=%{_target_platform} \
-    --with-vendor=redhat \
+    --with-vendor=anolis \
     %{!?with_int_bdb: --with-external-db} \
     %{!?with_plugins: --disable-plugins} \
     --with-lua \
@@ -678,6 +679,9 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
+* Thu Jan 21 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.2-37.0.1
+- Rebrand for OpenAnolis
+
 * Fri Feb 21 2020 Michal Domonkos <mdomonko@redhat.com> - 4.14.2-37
 - Add API safeguard for DNF by using Conflicts: (#1790400)
 
