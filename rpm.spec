@@ -174,7 +174,7 @@ BuildRequires: fakechroot gnupg2
 
 # XXX generally assumed to be installed but make it explicit as rpm
 # is a bit special...
-BuildRequires: anolis-rpm-config
+BuildRequires: redhat-rpm-config
 BuildRequires: gcc make
 BuildRequires: gawk
 BuildRequires: elfutils-devel >= 0.112
@@ -452,7 +452,7 @@ done;
     --libdir=%{_libdir} \
     --build=%{_target_platform} \
     --host=%{_target_platform} \
-    --with-vendor=anolis \
+    --with-vendor=redhat \
     %{!?with_int_bdb: --with-external-db} \
     %{!?with_plugins: --disable-plugins} \
     --with-lua \
@@ -680,7 +680,7 @@ make check || cat tests/rpmtests.log
 
 %changelog
 * Thu Jan 21 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.2-37.0.1
-- Rebrand for OpenAnolis
+- Rebrand for Anolis OS
 
 * Fri Feb 21 2020 Michal Domonkos <mdomonko@redhat.com> - 4.14.2-37
 - Add API safeguard for DNF by using Conflicts: (#1790400)
