@@ -77,7 +77,7 @@ Adjusted for rpm-4.14.2 in RHEL
    eu-strip --remove-comment $r $g ${keep_remove_args} -f "$1" "$2" || exit
    chmod 444 "$1" || exit
  }
-@@ -409,8 +426,12 @@
+@@ -430,8 +430,12 @@
    # libraries. Other executable ELF files (like kernel modules) don't need it.
    if [ "$include_minidebug" = "true" -a "$strip_g" = "false" ]; then
      skip_mini=true
@@ -89,5 +89,5 @@ Adjusted for rpm-4.14.2 in RHEL
      case "$(file -bi "$f")" in
 -      application/x-sharedlib*) skip_mini=false ;;
        application/x-executable*) skip_mini=false ;;
+       application/x-pie-executable*) skip_mini=false ;;
      esac
-     $skip_mini || add_minidebug "${debugfn}" "$f"

@@ -61,20 +61,16 @@ index 622e48011..0d475af86 100644
  static int sinfoCmp(const void *a, const void *b)
  {
      const struct rpmsinfo_s *sa = a;
-diff --git a/lib/rpmvs.h b/lib/rpmvs.h
-index b27d9a612..a836d5c94 100644
---- a/lib/rpmvs.h
-+++ b/lib/rpmvs.h
-@@ -75,6 +75,9 @@ void rpmvsInitRange(struct rpmvs_s *sis, int range);
- RPM_GNUC_INTERNAL
+--- rpm-4.14.3/lib/rpmvs.h.orig	2020-04-28 10:57:19.727347211 +0200
++++ rpm-4.14.3/lib/rpmvs.h	2020-04-28 10:57:43.622612015 +0200
+@@ -66,6 +66,8 @@
+ 
  void rpmvsFiniRange(struct rpmvs_s *sis, int range);
  
-+RPM_GNUC_INTERNAL
-+int rpmvsRange(struct rpmvs_s *vs);
++int rpmvsRange(struct rpmvs_s *vs); 
 +
- RPM_GNUC_INTERNAL
  int rpmvsVerify(struct rpmvs_s *sis, int type,
                         rpmsinfoCb cb, void *cbdata);
+ 
 -- 
 2.20.1
-

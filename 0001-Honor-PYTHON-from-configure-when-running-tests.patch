@@ -28,31 +28,26 @@ index eaf817cc2..21ca216a8 100644
  EXTRA_DIST += atlocal.in
 diff --git a/tests/atlocal.in b/tests/atlocal.in
 index d7d837f45..3b1474b56 100644
---- a/tests/atlocal.in
-+++ b/tests/atlocal.in
-@@ -3,7 +3,8 @@ export LD_LIBRARY_PATH
+--- rpm-4.14.3/tests/atlocal.in.orig	2020-04-28 14:19:26.866602968 +0200
++++ rpm-4.14.3/tests/atlocal.in	2020-04-28 14:21:07.977910054 +0200
+@@ -3,7 +3,8 @@
  PATH="${abs_builddir}/testing@rpmbindir@:${abs_builddir}/testing@usrbindir@:$PATH"
  export PATH
  
--PYLIBDIR=`python -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1,0,'@execprefix@'))"`
+-PYLIBDIR=`python2 -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1,0,'@execprefix@'))"`
 +PYTHON=@PYTHON@
 +PYLIBDIR=$(${PYTHON} -c "from distutils.sysconfig import get_python_lib; import sys; sys.stdout.write(get_python_lib(1,0,'@execprefix@'))")
  PYTHONPATH="${abs_builddir}/testing${PYLIBDIR}"
  export PYTHONPATH
  
-diff --git a/tests/local.at b/tests/local.at
-index 48c5d3f96..4952b9d61 100644
---- a/tests/local.at
-+++ b/tests/local.at
-@@ -17,7 +17,7 @@ def myprint(msg = ''):
+--- rpm-4.14.3/tests/local.at.orig	2020-04-28 14:28:33.106664317 +0200
++++ rpm-4.14.3/tests/local.at	2020-04-28 14:29:02.064038653 +0200
+@@ -18,7 +18,7 @@
      sys.stdout.write('%s\n' % msg)
  $1
  EOF
--python test.py
-+${PYTHON} test.py
+-python2 test.py
++${PYTHON} test.py test.py
  ]])
  
  m4_define([RPMPY_CHECK],[
--- 
-2.21.0
-

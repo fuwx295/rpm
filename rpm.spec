@@ -1,4 +1,3 @@
-%define anolis_release .0.1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -20,7 +19,7 @@
 # build with lmdb support?
 %bcond_with lmdb
 
-%if 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?rhel} > 7
 # Disable python2 build by default
 %bcond_with python2
 %else
@@ -29,9 +28,9 @@
 
 %define rpmhome /usr/lib/rpm
 
-%global rpmver 4.14.2
+%global rpmver 4.14.3
 #global snapver rc2
-%global rel 37
+%global rel 13
 
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(echo %{version} | cut -d'.' -f1-2).x}
@@ -43,7 +42,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}%{rel}%{anolis_release}%{?dist}
+Release: %{?snapver:0.%{snapver}.}%{rel}%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -73,37 +72,14 @@ Patch5: rpm-4.12.0-rpm2cpio-hack.patch
 Patch7: rpm-4.14.1-Add-envvar-that-will-be-present-during-RPM-build.patch
 
 # Patches already upstream:
-Patch100: 0001-Fix-nasty-setperms-setugids-regression-in-4.14.2-RhB.patch
 Patch101: rpm-4.14.2-RPMTAG_MODULARITYLABEL.patch
 Patch102: 0001-Document-noverify-in-the-man-page-RhBug-1646458.patch
-Patch103: 0001-Handle-unsupported-digests-the-same-as-disabled-ones.patch
 Patch104: 0001-Mark-elements-with-associated-problems-as-failed.patch
-Patch105: 0001-Fix-ancient-python-GIL-locking-bug-on-callback-RhBug.patch
-Patch106: 0001-Fix-testing-for-wrong-variable-in-selinux-plugin-deb.patch
-Patch107: 0001-Log-RPMLOG_ERR-level-messages-on-actual-errors-in-se.patch
 Patch108: 0001-Only-read-through-payload-on-verify-if-actually-need.patch
-Patch109: 0001-Make-rpmsign-exit-values-more-consistent-with-our-ot.patch
-Patch110: 0002-Drop-internal-only-visibility-on-rpmvs-related-API.patch
 Patch111: 0003-Verify-packages-before-signing-RhBug-1646388.patch
 Patch112: 0001-Fix-FA_TOUCH-on-files-with-suid-sgid-bits-and-or-cap.patch
-Patch113: 0001-Sort-list-of-hard-linked-files-in-find-debuginfo.sh-.patch
-Patch114: 0001-Correct-rpm-ql-exit-value-when-optional-p-is-omitted.patch
-Patch115: 0001-Show-list-of-files-only-once-when-use-rpm-ql-and-mul.patch
 Patch116: 0001-Add-flag-to-use-strip-g-instead-of-full-strip-on-DSO.patch
-Patch117: 0001-Fix-segfault-on-fingerprinting-symlink-round-RhBug-1.patch
-Patch118: 0001-Fix-packages-getting-erased-on-failed-update-with-dn.patch
 Patch119: 0001-Use-in-condition-to-avoid-sub-processes-in-find-debu.patch
-Patch120: 0001-rpmsign-man-page-Add-line-about-rpmsign-requiring-a-.patch
-Patch121: 0001-Use-dpbath-only-with-full-path-RhBug-1696408.patch
-Patch122: 0001-Fix-a-blindingly-obvious-memleak-in-package-verify-s.patch
-Patch123: 0001-Fix-rpmfiles-memory-leak-on-postuntrans-file-trigger.patch
-Patch125: 0001-Remove-capabilities-instead-of-setting-empty-caps-vi.patch
-Patch126: 0001-Fix-off-by-one-in-hdrblobGet-making-last-entry-unrea.patch
-Patch127: 0001-Fix-memleak-during-transaction-verify-step-in-the-NO.patch
-Patch128: 0001-Detect-kernel-modules-by-.modinfo-section-presence-f.patch
-Patch129: 0002-Support-build-id-generation-from-compressed-ELF-file.patch
-Patch130: 0001-Add-step-to-find-debuginfo.sh-script-to-compress-ann.patch
-Patch131: 0001-rpmpgp-Handle-EOF-without-EOL-better-at-END-PGP.patch
 Patch132: 0001-debugedit-Refactor-reading-writing-of-relocated-valu.patch
 Patch133: 0002-Handle-.debug_macro-in-debugedit.patch
 Patch134: 0003-debugedit-Make-sure-.debug_line-old-new-idx-start-eq.patch
@@ -115,11 +91,18 @@ Patch139: 0001-Make-check-buildroot-check-the-build-files-in-parall.patch
 Patch140: 0001-Fix-resource-leaks-on-zstd-open-error-paths.patch
 # XXX should be before 0001-Pass-RPM_BUILD_NCPUS-to-build-scripts.patch
 Patch141: 0001-Isolate-_smp_build_ncpus-and-use-it-for-_smp_mflags.patch
-Patch143: 0002-build-check-rich-dependencies-for-special-characters.patch
-Patch144: 0003-Add-support-for-sorting-caret-higher-than-base-versi.patch
-Patch145: rpm-4.14.x-whitelist-name.patch
-Patch146: 0001-Consolidate-allowed-version-release-evr-allowed-char.patch
-Patch147: 0002-Actually-permit-caret-in-version-release-and-evr-str.patch
+Patch142: rpm-4.14.3-GPG-Switch-back-to-pipe-7-for-signing.patch
+Patch143: 0001-Work-around-buggy-signature-region-preventing-resign.patch
+Patch144: 0001-Fix-python-ts.addErase-not-raising-exception-on-not-.patch
+Patch145: 0001-Always-close-libelf-handle-1313.patch
+Patch146: 0001-When-doing-the-same-thing-more-than-once-use-a-loop.patch
+Patch147: 0001-Introduce-patch_nums-and-source_nums-Lua-variables-i.patch
+Patch148: 0001-Add-limits-to-autopatch-macro.patch
+Patch149: rpm-4.14.3-bump-up-the-limit-of-signature-header-to-64MB.patch
+Patch150: rpm-4.14.3-add-fapolicyd-rpm-plugin.patch
+Patch151: 0001-Unblock-signals-in-forked-scriptlets.patch
+Patch152: rpm-4.14.3-fix-ambiguous-diagnostics-on-file-triggers.patch
+Patch153: rpm-4.14.3-ELF-files-strip-when-debuginfo-disabled.patch
 
 # Python 3 string API sanity
 Patch500: 0001-In-Python-3-return-all-our-string-data-as-surrogate-.patch
@@ -132,6 +115,8 @@ Patch504: 0002-Use-Python-3-compatible-exception-syntax-in-tests.patch
 Patch505: 0003-Fix-couple-of-bytes-vs-strings-issues-in-Python-test.patch
 Patch506: 0004-Bump-the-minimum-Python-version-requirement-to-2.7.patch
 Patch507: 0005-Drop-an-unnecessary-Python-2-vs-3-incompatibility-fr.patch
+Patch508: rpm-4.14.3-python3.diff
+Patch509: rpm-4-14.3-selinux-log-error.patch
 
 # These are not yet upstream
 # Audit support
@@ -222,7 +207,7 @@ BuildRequires: libubsan
 %endif
 
 %if %{with libimaevm}
-%if 0%{?fedora} >= 28 || 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?fedora} >= 28 || 0%{?rhel} > 7
 %global imadevname ima-evm-utils-devel
 %else
 %global imadevname ima-evm-utils
@@ -416,6 +401,15 @@ Requires: rpm-libs%{_isa} = %{version}-%{release}
 Useful on legacy SysV init systems if you run rpm transactions with
 nice/ionice priorities. Should not be used on systemd systems.
 
+%package plugin-fapolicyd
+Summary: Rpm plugin for fapolicyd functionality
+Requires: rpm-libs%{_isa} = %{version}-%{release}
+Provides: fapolicyd-plugin
+Obsoletes: fapolicyd-dnf-plugin
+
+%description plugin-fapolicyd
+%{summary}.
+
 %endif # with plugins
 
 %prep
@@ -459,10 +453,12 @@ done;
     --with-selinux \
     --with-cap \
     --with-acl \
-    %{?with_ndb: --with-ndb} \
+    %{?with_ndb: --enable-ndb} \
+    %{!?with_libarchive: --without-archive} \
     %{?with_libimaevm: --with-imaevm} \
     %{?with_zstd: --enable-zstd} \
     %{?with_lmdb: --enable-lmdb} \
+    --with-fapolicyd \
     --enable-python \
     --with-crypto=openssl \
     PYTHON=python3
@@ -557,7 +553,9 @@ make check || cat tests/rpmtests.log
 %attr(0644, root, root) %verify(not md5 size mtime) %ghost %config(missingok,noreplace) /var/lib/rpm/*
 
 %{_bindir}/rpm
+%if %{with libarchive}
 %{_bindir}/rpm2archive
+%endif
 %{_bindir}/rpm2cpio
 %{_bindir}/rpmdb
 %{_bindir}/rpmkeys
@@ -617,6 +615,10 @@ make check || cat tests/rpmtests.log
 
 %files plugin-prioreset
 %{_libdir}/rpm-plugins/prioreset.so
+
+%files plugin-fapolicyd
+%{_libdir}/rpm-plugins/fapolicyd.so
+%{_mandir}/man8/rpm-plugin-fapolicyd.8*
 %endif # with plugins
 
 %files build-libs
@@ -679,8 +681,42 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
-* Thu Jan 21 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.2-37.0.1
-- Rebrand for Anolis OS
+* Fri Feb 12 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-13
+- Fix minor issues found by COVSCAN in fapolicyd plugin
+- Actually honor libarchive bcond at configure time (#1902887)
+
+* Tue Feb 09 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-12
+- Bump up the limit of signature header to 64MB (#1918777)
+- Add fapolicyd plugin (#1923167)
+- Unblock signals in forked scriptlets (#1913765)
+- Fix ambiguous diagnostics output on file triggers (#1883338)
+- Ensure ELF files get stripped when debuginfo is disabled (#1634084)
+
+* Sun Jan 10 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-10
+- Rebuild for libimaevm soname bump, now for real (#1896046)
+
+* Thu Jan 07 2021 Florian Festi <ffesti@redhat.com> - 4.14.3-8
+- Add limits to autopatch macro (#1834931)
+
+* Thu Dec 03 2020 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-6
+- Rebuild for libimaevm soname bump (#1896046)
+
+* Fri Oct 30 2020 Florian Festi <ffesti@redhat.com> - 4.14.3-5
+- Don't error out when replacing an invalid signature (#1874062)
+- Raise an expection when erasing a package fails in Python (#1872623)
+- Fix builds on NFS filesystems (#1840728)
+
+* Fri Jun 26 2020 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-4
+- Fix hang when signing with expired key (#1746353)
+
+* Wed May 13 2020 Panu Matilainen <pmatilai@redhat.com> - 4.14.3-3
+- Fix configure option for --with ndb (#1817010, Matthew Almond)
+
+* Mon May 11 2020 Florian Festi <ffesti@redhat.com> - 4.14.3-2
+- Re-add selinux fix dropped in rebase
+
+* Mon May 4 2020 Florian Festi <ffesti@redhat.com> - 4.14.3-1
+- Rebase to 4.14.3 (#1765187)
 
 * Fri Feb 21 2020 Michal Domonkos <mdomonko@redhat.com> - 4.14.2-37
 - Add API safeguard for DNF by using Conflicts: (#1790400)
