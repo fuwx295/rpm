@@ -143,6 +143,8 @@ Patch1001: compile-with-Platform-Python-binary-where-relevant.patch
 # make unversioned %%__python an error unless explicitly overridden
 Patch1002: rpm-4.14.2-unversioned-python.patch
 
+Patch2000: 1000-rpm-anolis-support-loongarch.patch
+
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
 License: GPLv2+
@@ -691,6 +693,9 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
+* Tue Jan 25 2022 zhangwenlong <zhangwenlong@loongson.cn> - 4.14.3-19.0.3
+- Support loongarch for rpm
+
 * Thu Jan 20 2022 Weitao Zhou <zhouwt@linux.alibaba.com> - 4.14.3-19.0.2
 - Fix gcc10 -fno-common compile issue for compatible with gcc10 build
 
