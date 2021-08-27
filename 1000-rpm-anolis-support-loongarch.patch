@@ -1,0 +1,117 @@
+From 0ff0feb65aa56ae673e0ec0554996a7ce2ff6a38 Mon Sep 17 00:00:00 2001
+From: chenguoqi <chenguoqi@loongson.cn>
+Date: Tue, 3 Aug 2021 07:35:19 +0000
+Subject: [PATCH] support loongarch for rpm
+
+---
+ installplatform | 12 ++++++++++++
+ lib/rpmrc.c     |  6 ++++++
+ rpmrc.in        | 17 +++++++++++++++++
+ 3 files changed, 35 insertions(+)
+
+diff --git a/installplatform b/installplatform
+index 12339fc..74c50a2 100755
+--- a/installplatform
++++ b/installplatform
+@@ -168,6 +168,18 @@ for ARCH in noarch `grep ^arch_canon $RPMRC | cut -d: -f2`; do
+ 	CANONARCH=mips64r6el
+ 	CANONCOLOR=3
+ 	;;
++    loongarch32)
++	ISANAME=loongarch
++	ISABITS=32
++	CANONARCH=loongarch32
++	CANONCOLOR=0
++	;;
++    loongarch64)
++	ISANAME=loongarch
++	ISABITS=64
++	CANONARCH=loongarch64
++	CANONCOLOR=3
++	;;
+     m68k)
+ 	ISANAME=m68k
+ 	ISABITS=32
+diff --git a/lib/rpmrc.c b/lib/rpmrc.c
+index cada3f7..c4b13cc 100644
+--- a/lib/rpmrc.c
++++ b/lib/rpmrc.c
+@@ -1241,6 +1241,12 @@ static void defaultMachine(rpmrcCtx ctx, const char ** arch, const char ** os)
+ 	}
+ #	endif	/* riscv */
+ 
++#	if defined(__linux__) && defined(__loongarch64)
++		strcpy(un.machine, "loongarch64");
++#       else
++		strcpy(un.machine, "loongarch32");
++#	endif	/* __loongarch64 */
++
+ #	if defined(__GNUC__) && defined(__alpha__)
+ 	{
+ 	    unsigned long amask, implver;
+diff --git a/rpmrc.in b/rpmrc.in
+index 3a5b1e6..425bb97 100644
+--- a/rpmrc.in
++++ b/rpmrc.in
+@@ -67,6 +67,8 @@ optflags: mipsr6el -O2 -g
+ optflags: mips64r6 -O2 -g
+ optflags: mips64r6el -O2 -g
+ 
++optflags: loongarch64 -O2 -g
++
+ optflags: armv3l -O2 -g -march=armv3
+ optflags: armv4b -O2 -g -march=armv4
+ optflags: armv4l -O2 -g -march=armv4
+@@ -134,6 +136,9 @@ archcolor: mipsr6el 1
+ archcolor: mips64r6 2
+ archcolor: mips64r6el 2
+ 
++archcolor: loongarch32 1
++archcolor: loongarch64 2
++
+ archcolor: m68k 1
+ 
+ archcolor: m68kmint 1
+@@ -252,6 +257,9 @@ arch_canon:	mips64r6el: mips64r6el	21
+ arch_canon:	riscv: riscv64	22
+ arch_canon:	riscv64: riscv64	22
+ 
++arch_canon:	loongarch32:	loongarch32	25
++arch_canon:	loongarch64:	loongarch64	26
++
+ #############################################################
+ # Canonical OS names and numbers
+ 
+@@ -353,6 +361,9 @@ buildarchtranslate: mipsr6el: mipsr6el
+ buildarchtranslate: mips64r6: mips64r6
+ buildarchtranslate: mips64r6el: mips64r6el
+ 
++buildarchtranslate: loongarch32: loongarch32
++buildarchtranslate: loongarch64: loongarch64
++
+ buildarchtranslate: m68k: m68k
+ 
+ buildarchtranslate: atarist: m68kmint
+@@ -442,6 +453,9 @@ arch_compat: mipsr6el: noarch
+ arch_compat: mips64r6: mipsr6
+ arch_compat: mips64r6el: mipsr6el
+ 
++arch_compat: loongarch32: noarch
++arch_compat: loongarch64: loongarch32
++
+ arch_compat: hppa2.0: hppa1.2
+ arch_compat: hppa1.2: hppa1.1
+ arch_compat: hppa1.1: hppa1.0
+@@ -577,6 +591,9 @@ buildarch_compat: mipsr6el: noarch
+ buildarch_compat: mips64r6: noarch
+ buildarch_compat: mips64r6el: noarch
+ 
++buildarch_compat: loongarch32: noarch
++buildarch_compat: loongarch64: noarch
++
+ buildarch_compat: armv4b: noarch
+ buildarch_compat: armv7l: armv6l
+ buildarch_compat: armv6l: armv5tejl
+-- 
+2.27.0
+

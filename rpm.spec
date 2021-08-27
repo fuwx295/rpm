@@ -1,4 +1,4 @@
-%define anolis_release .0.2
+%define anolis_release .0.1
 %define _legacy_common_support 1
 # build against xz?
 %bcond_without xz
@@ -143,6 +143,8 @@ Patch1000: disable-python-extra.patch
 Patch1001: compile-with-Platform-Python-binary-where-relevant.patch
 # make unversioned %%__python an error unless explicitly overridden
 Patch1002: rpm-4.14.2-unversioned-python.patch
+
+Patch2000: 1000-rpm-anolis-support-loongarch.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -692,11 +694,10 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
-* Tue Feb 8 2022 Weitao Zhou <zhouwt@linux.alibaba.com> - 4.14.3-19.0.2.2
-- Fix gcc10 -fno-common compile issue for compatible with gcc10 build
-
-* Tue Feb 8 2022 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.3-19.0.1.2
-- Rebrand for Anolis OS
+* Tue Feb 8 2022 Renbo <rb01097748@alibaba-inc.com> - 4.14.3-19.0.1.2
+- Support loongarch for rpm (zhangwenlong@loongson.cn)
+- Fix gcc10 -fno-common compile issue for compatible with gcc10 build (liwei.glw@linux.alibaba.com)
+- Rebrand for Anolis OS (zhangbinchen@openanolis.org)
 
 * Mon Jan 10 2022 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-19.2
 - Address covscan issues in binding sigs validation patch (#2022537)
