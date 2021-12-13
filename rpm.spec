@@ -1,4 +1,3 @@
-%define anolis_release .0.1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -19,8 +18,10 @@
 %bcond_without zstd
 # build with lmdb support?
 %bcond_with lmdb
+# build with readonly sqlite support?
+%bcond_without sqlite
 
-%if 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?rhel} > 7
 # Disable python2 build by default
 %bcond_with python2
 %else
@@ -31,7 +32,7 @@
 
 %global rpmver 4.14.3
 #global snapver rc2
-%global rel 14
+%global rel 19
 
 %global srcver %{version}%{?snapver:-%{snapver}}
 %global srcdir %{?snapver:testing}%{!?snapver:%{name}-%(echo %{version} | cut -d'.' -f1-2).x}
@@ -43,7 +44,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}%{rel}%{anolis_release}%{?dist}
+Release: %{?snapver:0.%{snapver}.}%{rel}%{?dist}
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -105,12 +106,13 @@ Patch151: 0001-Unblock-signals-in-forked-scriptlets.patch
 Patch152: rpm-4.14.3-fix-ambiguous-diagnostics-on-file-triggers.patch
 Patch153: rpm-4.14.3-ELF-files-strip-when-debuginfo-disabled.patch
 Patch154: rpm-4.14.3-more-careful-sig-hdr-copy.patch
+Patch156: rpm-4.14.3-hdrblobInit-add-bounds-check.patch
+Patch157: rpm-4.14.3-add-read-only-support-for-sqlite.patch
+Patch158: rpm-4.14.3-imp-covscan-fixes.patch
 
 # Python 3 string API sanity
 Patch500: 0001-In-Python-3-return-all-our-string-data-as-surrogate-.patch
 Patch501: 0001-Return-NULL-string-as-None-from-utf8FromString.patch
-# Temporary compat crutch, not upstream
-Patch502: 0001-Monkey-patch-.decode-method-to-our-strings-as-a-temp.patch
 # Make test-suite work with Python 3
 Patch503: 0001-Honor-PYTHON-from-configure-when-running-tests.patch
 Patch504: 0002-Use-Python-3-compatible-exception-syntax-in-tests.patch
@@ -178,6 +180,9 @@ BuildRequires: lua-devel >= 5.1
 BuildRequires: libcap-devel
 BuildRequires: libacl-devel
 BuildRequires: audit-libs-devel
+%if %{with sqlite}
+BuildRequires: sqlite-devel
+%endif
 %if %{with xz}
 BuildRequires: xz-devel >= 4.999.8
 %endif
@@ -209,7 +214,7 @@ BuildRequires: libubsan
 %endif
 
 %if %{with libimaevm}
-%if 0%{?fedora} >= 28 || 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?fedora} >= 28 || 0%{?rhel} > 7
 %global imadevname ima-evm-utils-devel
 %else
 %global imadevname ima-evm-utils
@@ -460,6 +465,7 @@ done;
     %{?with_libimaevm: --with-imaevm} \
     %{?with_zstd: --enable-zstd} \
     %{?with_lmdb: --enable-lmdb} \
+    %{?with_sqlite: --enable-sqlite} \
     --with-fapolicyd \
     --enable-python \
     --with-crypto=openssl \
@@ -683,9 +689,23 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
-* Tue Jul 20 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.3-14.0.1
-- Rebrand for Anolis OS
-- cherry-pick [0ab5e55]
+* Wed Oct 06 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-19
+- Unbreak in-tree kmod strip by reverting brp-strip fix (#1967291)
+
+* Thu Aug 26 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-18
+- Address important covscan issues (#1996665), vol. 2
+
+* Mon Aug 23 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-17
+- Address important covscan issues (#1996665)
+
+* Thu Aug 19 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-16
+- Add support for read-only sqlite rpmdb (#1938928)
+- Drop compat .decode() method from returned Py3 strings (#1840142)
+
+* Thu Jul 15 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-15
+- Add out-of-bounds checks to hdrblobInit() (#1929445)
+- Fixes CVE-2021-20266
+- Fix regression in brp-strip causing kmods to lose SecureBoot sig (#1967291)
 
 * Thu May 27 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-14
 - Be more careful about copying data from signature header (#1958477)
