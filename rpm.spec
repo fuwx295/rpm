@@ -1,5 +1,3 @@
-%define anolis_release .0.2
-%define _legacy_common_support 1
 # build against xz?
 %bcond_without xz
 # just for giggles, option to build with internal Berkeley DB
@@ -23,7 +21,7 @@
 # build with readonly sqlite support?
 %bcond_without sqlite
 
-%if 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?rhel} > 7
 # Disable python2 build by default
 %bcond_with python2
 %else
@@ -46,7 +44,7 @@
 Summary: The RPM package management system
 Name: rpm
 Version: %{rpmver}
-Release: %{?snapver:0.%{snapver}.}%{rel}%{anolis_release}%{?dist}
+Release: %{?snapver:0.%{snapver}.}%{rel}%{?dist}.2
 Group: System Environment/Base
 Url: http://www.rpm.org/
 Source0: http://ftp.rpm.org/releases/%{srcdir}/%{name}-%{srcver}.tar.bz2
@@ -111,6 +109,7 @@ Patch154: rpm-4.14.3-more-careful-sig-hdr-copy.patch
 Patch156: rpm-4.14.3-hdrblobInit-add-bounds-check.patch
 Patch157: rpm-4.14.3-add-read-only-support-for-sqlite.patch
 Patch158: rpm-4.14.3-imp-covscan-fixes.patch
+Patch159: rpm-4.14.3-validate-and-require-subkey-binding-sigs.patch
 
 # Python 3 string API sanity
 Patch500: 0001-In-Python-3-return-all-our-string-data-as-surrogate-.patch
@@ -142,8 +141,6 @@ Patch1000: disable-python-extra.patch
 Patch1001: compile-with-Platform-Python-binary-where-relevant.patch
 # make unversioned %%__python an error unless explicitly overridden
 Patch1002: rpm-4.14.2-unversioned-python.patch
-
-Patch2000: 1000-rpm-anolis-support-loongarch.patch
 
 # Partially GPL/LGPL dual-licensed and some bits with BSD
 # SourceLicense: (GPLv2+ and LGPLv2+ with exceptions) and BSD 
@@ -218,7 +215,7 @@ BuildRequires: libubsan
 %endif
 
 %if %{with libimaevm}
-%if 0%{?fedora} >= 28 || 0%{?rhel} > 7 || 0%{?anolis}
+%if 0%{?fedora} >= 28 || 0%{?rhel} > 7
 %global imadevname ima-evm-utils-devel
 %else
 %global imadevname ima-evm-utils
@@ -693,14 +690,12 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
-* Tue Jan 25 2022 zhangwenlong <zhangwenlong@loongson.cn> - 4.14.3-19.0.3
-- Support loongarch for rpm
+* Mon Jan 10 2022 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-19.2
+- Address covscan issues in binding sigs validation patch (#2022537)
 
-* Thu Jan 20 2022 Weitao Zhou <zhouwt@linux.alibaba.com> - 4.14.3-19.0.2
-- Fix gcc10 -fno-common compile issue for compatible with gcc10 build
-
-* Wed Dec 15 2021 zhangbinchen <zhangbinchen@openanolis.org> - 4.14.3-19.0.1
-- Rebrand for Anolis OS
+* Thu Jan 06 2022 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-19.1
+- Validate and require subkey binding sigs on PGP pubkeys (#2022537)
+- Fixes CVE-2021-3521
 
 * Wed Oct 06 2021 Michal Domonkos <mdomonko@redhat.com> - 4.14.3-19
 - Unbreak in-tree kmod strip by reverting brp-strip fix (#1967291)
