@@ -42,7 +42,7 @@ index cada3f7..c4b13cc 100644
  
 +#	if defined(__linux__) && defined(__loongarch64)
 +		strcpy(un.machine, "loongarch64");
-+#       else
++#	elif defined(__linux__) && defined(__loongarch32)
 +		strcpy(un.machine, "loongarch32");
 +#	endif	/* __loongarch64 */
 +

@@ -1,4 +1,4 @@
-%define anolis_release .0.1
+%define anolis_release .0.2
 %define _legacy_common_support 1
 # build against xz?
 %bcond_without xz
@@ -694,6 +694,9 @@ make check || cat tests/rpmtests.log
 %doc doc/librpm/html/*
 
 %changelog
+* Wed Feb 9 2022 Liwei Ge <liwei.glw@alibaba-inc.com> - 4.14.3-19.0.2.2
+- Fix loongarch platform support
+
 * Tue Feb 8 2022 Renbo <rb01097748@alibaba-inc.com> - 4.14.3-19.0.1.2
 - Support loongarch for rpm (zhangwenlong@loongson.cn)
 - Fix gcc10 -fno-common compile issue for compatible with gcc10 build (liwei.glw@linux.alibaba.com)
