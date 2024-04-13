@@ -437,7 +437,7 @@ ln -s db-%{bdbver} db
 #LDFLAGS=-L%{_libdir}/db%{bdbver}
 %endif
 CPPFLAGS="$CPPFLAGS -DLUA_COMPAT_APIINTCASTS"
-CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS"
+CFLAGS="$RPM_OPT_FLAGS %{?sanitizer_flags} -DLUA_COMPAT_APIINTCASTS -g"
 LDFLAGS="$LDFLAGS %{?__global_ldflags}"
 export CPPFLAGS CFLAGS LDFLAGS
 
