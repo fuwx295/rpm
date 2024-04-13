@@ -1,4 +1,4 @@
-#!bin/sh
+#!/bin/sh
 
 rsync -av --progress ../ /root/rpmbuild/SOURCES --exclude debug
 
